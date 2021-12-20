@@ -2,9 +2,7 @@ package slang;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * slang
@@ -69,5 +67,35 @@ public class Data {
         a.search("$");
         a.search(">.<");
 
+    }
+
+    public String wordForToday(){
+        Set<String> keySet = dict.keySet();
+        ArrayList<String> keyList = new ArrayList<>(keySet);
+
+        int size = keyList.size();
+        int randIdx = new Random().nextInt(size);
+
+        String randomKey = keyList.get(randIdx);
+        ArrayList<String> randomValue = dict.get(randomKey);
+        return "\t             " + randomKey+ "\n" + toString(randomValue);
+    }
+
+    public String toStringOneLine(ArrayList<String> str){
+        String res = "";
+        for (String s : str)
+        {
+            res += s + ", ";
+        }
+        return res;
+    }
+
+    public String toString(ArrayList<String> str){
+        String res = "";
+        for (String s : str)
+        {
+            res += "- " + s + "\n";
+        }
+        return res;
     }
 }
