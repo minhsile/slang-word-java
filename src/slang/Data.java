@@ -1,7 +1,6 @@
 package slang;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -22,6 +21,45 @@ public class Data {
         dict = new HashMap<>();
         historyList = new ArrayList<>();
         readData(false);
+        readHistory();
+    }
+
+    public ArrayList<String> getHistoryList() {
+        return historyList;
+    }
+
+    public void addHistory(String str){
+        historyList.add(str);
+    }
+
+    private void readHistory() {
+        File tempFile = new File(pathDataHistory);
+        boolean exists = tempFile.exists();
+        if (exists) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(pathDataHistory));
+                while (true) {
+                    String line = br.readLine();
+                    if (line == null)
+                        break;
+                    historyList.add(line);
+                }
+                br.close();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+      }
+    }
+
+    private void writeHistory(){
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(pathDataHistory));
+            for (String data: historyList)
+                bw.write(data);
+            bw.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 
@@ -56,24 +94,22 @@ public class Data {
 
     public ArrayList<String> search(String str, boolean flag){
         if (flag)
-            return dict.get(str);
+            return dict.get(str.toLowerCase());
         else{
             String[] keys = dict.keySet().toArray(new String[0]);
-            ArrayList<String> resultKeys = new ArrayList<>();
-            String definitionLowercase = str.toLowerCase();
+            ArrayList<String> result = new ArrayList<>();
             for (String key: keys){
                 ArrayList<String> meanings = dict.get(key);
                 if (meanings != null){
                     for (String value: meanings){
-                        String temp = value.toLowerCase();
                         if(value.toLowerCase().contains(str.toLowerCase())){
-                            resultKeys.add(key);
+                            result.add(key+": "+ value);
                             break;
                         }
                     }
                 }
             }
-            return resultKeys;
+            return result;
         }
     }
 

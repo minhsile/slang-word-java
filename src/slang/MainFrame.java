@@ -20,8 +20,9 @@ public class MainFrame extends JPanel implements ActionListener {
     JTextField txtSearch = new JTextField();
     JButton btnSearchByWord = new JButton("Search by word");
     JButton btnSearchByDef = new JButton("Search by definition");
-    JButton btnAdd = new JButton();
+    JButton btnAdd = new JButton("Add");
     JButton btnRefresh = new JButton();
+    JButton btnViewHistory = new JButton("History");
     JTextArea txtRandomWord = new JTextArea();
     JButton btnReset = new JButton("Reset original sang words");
     JButton btnQuizWord = new JButton("\tQuiz slang word\t");
@@ -39,8 +40,8 @@ public class MainFrame extends JPanel implements ActionListener {
         add(labelTitlte);
         add(Box.createRigidArea(new Dimension(0,10)));
         txtSearch.setFont(myFontContent);
-        txtSearch.setColumns(30);
-        txtSearch.setMaximumSize(txtSearch.getPreferredSize());
+        txtSearch.setColumns(28);
+//        txtSearch.setMaximumSize(txtSearch.getPreferredSize());
         txtSearch.setAlignmentX(CENTER_ALIGNMENT);
         txtSearch.setBorder(new TitledBorder(null, "Search", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         add(txtSearch);
@@ -62,7 +63,7 @@ public class MainFrame extends JPanel implements ActionListener {
         txtRandomWord.setColumns(32);
         txtRandomWord.setRows(5);
         txtRandomWord.setEditable(false);
-        txtRandomWord.setMaximumSize(txtRandomWord.getPreferredSize());
+//        txtRandomWord.setMaximumSize(txtRandomWord.getPreferredSize());
         txtRandomWord.setBorder(new TitledBorder(null, "Word for today", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         txtRandomWord.setText(dictinary.wordForToday());
         quiz.add(txtRandomWord);
@@ -83,16 +84,27 @@ public class MainFrame extends JPanel implements ActionListener {
         JPanel panelBtnFunction = new JPanel();
         panelBtnFunction.setLayout(new BoxLayout(panelBtnFunction, BoxLayout.Y_AXIS));
         panelBtnFunction.setAlignmentX(CENTER_ALIGNMENT);
-        btnReset.setAlignmentX(CENTER_ALIGNMENT);
-        panelBtnFunction.add(btnReset);
-        panelBtnFunction.add(Box.createRigidArea(new Dimension(0,10)));
-        btnQuizWord.setAlignmentX(CENTER_ALIGNMENT);
-        panelBtnFunction.add(btnQuizWord);
-        panelBtnFunction.add(Box.createRigidArea(new Dimension(0,10)));
-        btnQuizDef.setAlignmentX(CENTER_ALIGNMENT);
-        panelBtnFunction.add(btnQuizDef);
         add(panelBtnFunction);
 
+        JPanel panelBtn1 = new JPanel();
+        panelBtn1.setLayout(new BoxLayout(panelBtn1, BoxLayout.LINE_AXIS));
+        panelBtn1.add(btnAdd);
+        panelBtn1.add(Box.createRigidArea(new Dimension(10,0)));
+        panelBtn1.add(btnReset);
+        panelBtn1.add(Box.createRigidArea(new Dimension(10,0)));
+        panelBtn1.add(btnViewHistory);
+        btnViewHistory.addActionListener(this);
+        panelBtnFunction.add(panelBtn1);
+        panelBtnFunction.add(Box.createRigidArea(new Dimension(0,10)));
+
+        JPanel panelBtn2 = new JPanel();
+        panelBtn2.setLayout(new BoxLayout(panelBtn2, BoxLayout.LINE_AXIS));
+        panelBtn2.add(btnQuizWord);
+        panelBtn2.add(Box.createRigidArea(new Dimension(10,0)));
+        panelBtn2.add(btnQuizDef);
+        panelBtnFunction.add(panelBtn2);
+
+        add(Box.createRigidArea(new Dimension(0,15)));
     }
     /**
      * Create and show GUI
@@ -121,16 +133,19 @@ public class MainFrame extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnSearchByWord) {
             JFrame frameDisplay = new JFrame("Result");
-            frameDisplay.setBounds(400,300,300,150);
+            frameDisplay.setBounds(400,300,320,200);
             frameDisplay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             if (!txtSearch.getText().equals(""))
             {
-                frameDisplay.setContentPane(panelSearch(dictinary.search(txtSearch.getText(), true), "Definition"));
-                frameDisplay.setResizable(false);
-                frameDisplay.setVisible(true);
+                dictinary.addHistory(txtSearch.getText());
+                ArrayList<String> result = dictinary.search(txtSearch.getText(), true);
+                if (result != null) {
+                    frameDisplay.setContentPane(panelSearch(result, "Definition"));
+                    frameDisplay.setResizable(false);
+                    frameDisplay.setVisible(true);
+                } else JOptionPane.showMessageDialog(this, "This word does not exist!");
             }
-            else JOptionPane.showMessageDialog(this,
-                    "Empty!");
+            else JOptionPane.showMessageDialog(this, "Empty!");
         }
         else if (e.getSource() == btnRefresh){
             txtRandomWord.setText(dictinary.wordForToday());
@@ -141,16 +156,30 @@ public class MainFrame extends JPanel implements ActionListener {
             frameDisplay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             if (!txtSearch.getText().equals(""))
             {
-                frameDisplay.setContentPane(panelSearch(dictinary.search(txtSearch.getText(), false), "Word"));
+                dictinary.addHistory(txtSearch.getText());
+                ArrayList<String> result = dictinary.search(txtSearch.getText(), false);
+                if (result != null) {
+                    frameDisplay.setContentPane(panelSearch(result, "Word"));
+                    frameDisplay.setResizable(false);
+                    frameDisplay.setVisible(true);
+                } else JOptionPane.showMessageDialog(this, "This word does not exist!");
+            }
+            else JOptionPane.showMessageDialog(this, "Empty!");
+        } else if (e.getSource() == btnViewHistory){
+            JFrame frameDisplay = new JFrame("History");
+            frameDisplay.setBounds(400,300,320,200);
+            frameDisplay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            ArrayList<String> result = dictinary.getHistoryList();
+            if (result != null) {
+                frameDisplay.setContentPane(panelHistory(result));
                 frameDisplay.setResizable(false);
                 frameDisplay.setVisible(true);
-            }
-            else JOptionPane.showMessageDialog(this,
-                    "Empty!");
+            } else JOptionPane.showMessageDialog(this, "This word does not exist!");
+
         }
     }
 
-    private JPanel panelSearch(ArrayList<String> search, String tilte){
+    private JPanel panelSearch(ArrayList<String> search, String title){
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         JLabel labelWord = new JLabel();
@@ -162,7 +191,7 @@ public class MainFrame extends JPanel implements ActionListener {
         JTextArea txtDef = new JTextArea();
         JScrollPane scrollBar = new JScrollPane(txtDef);
         scrollBar.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
-        txtDef.setBorder(new TitledBorder(null, tilte, TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        txtDef.setBorder(new TitledBorder(null, title, TitledBorder.LEADING, TitledBorder.TOP, null, null));
         txtDef.setEditable(false);
         txtDef.setColumns(20);
         txtDef.setRows(5);
@@ -172,9 +201,22 @@ public class MainFrame extends JPanel implements ActionListener {
         return panel;
     }
 
+    private JPanel panelHistory(ArrayList<String> history){
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
+        JTextArea txtDef = new JTextArea();
+        JScrollPane scrollBar = new JScrollPane(txtDef);
+        scrollBar.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
+        txtDef.setBorder(new TitledBorder(null, "History", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        txtDef.setEditable(false);
+        txtDef.setColumns(20);
+        txtDef.setRows(5);
+        txtDef.setText(dictinary.toString(history));
+        panel.add(scrollBar);
 
-
+        return panel;
+    }
 }
 
 
