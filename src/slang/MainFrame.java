@@ -1,17 +1,12 @@
 package slang;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Random;
-import java.util.Set;
 
 /**
  * ui
@@ -26,6 +21,7 @@ public class MainFrame extends JPanel implements ActionListener {
     JButton btnSearchByWord = new JButton("Search by word");
     JButton btnSearchByDef = new JButton("Search by definition");
     JButton btnAdd = new JButton();
+    JButton btnRefresh = new JButton();
     JTextArea txtRandomWord = new JTextArea();
     JButton btnReset = new JButton("Reset original sang words");
     JButton btnQuizWord = new JButton("\tQuiz slang word\t");
@@ -60,14 +56,28 @@ public class MainFrame extends JPanel implements ActionListener {
         add(panelBtnSearch);
 
         add(Box.createRigidArea(new Dimension(0,10)));
+        JPanel quiz = new JPanel();
+        quiz.setLayout(new BoxLayout(quiz, BoxLayout.LINE_AXIS));
         txtRandomWord.setFont(myFontContent_1);
-        txtRandomWord.setColumns(30);
+        txtRandomWord.setColumns(32);
         txtRandomWord.setRows(5);
         txtRandomWord.setEditable(false);
         txtRandomWord.setMaximumSize(txtRandomWord.getPreferredSize());
         txtRandomWord.setBorder(new TitledBorder(null, "Word for today", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         txtRandomWord.setText(dictinary.wordForToday());
-        add(txtRandomWord);
+        quiz.add(txtRandomWord);
+        ImageIcon iconRefresh = new ImageIcon(MainFrame.class.getResource("/icon/refresh.png"));
+        int scale = 45;
+        int width = iconRefresh.getIconWidth();
+        int newWidth = width / scale;
+        btnRefresh.setIcon(new ImageIcon(iconRefresh.getImage().getScaledInstance(newWidth, -1, java.awt.Image.SCALE_SMOOTH)));
+        btnRefresh.setToolTipText("Refresh");
+        btnRefresh.setBorder(new EmptyBorder(0, 0, 0, 0));
+        btnRefresh.setContentAreaFilled(false);
+        btnRefresh.addActionListener(this);
+        quiz.add(Box.createRigidArea(new Dimension(10,0)));
+        quiz.add(btnRefresh);
+        add(quiz);
         add(Box.createRigidArea(new Dimension(0,10)));
 
         JPanel panelBtnFunction = new JPanel();
@@ -95,7 +105,7 @@ public class MainFrame extends JPanel implements ActionListener {
 
         MainFrame newContentPane = new MainFrame();
         frame.setContentPane(newContentPane);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setVisible(true);
     }
 
@@ -113,13 +123,34 @@ public class MainFrame extends JPanel implements ActionListener {
             JFrame frameDisplay = new JFrame("Result");
             frameDisplay.setBounds(400,300,300,150);
             frameDisplay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frameDisplay.setContentPane(panelSearch(dictinary.search(txtSearch.getText())));
-            frameDisplay.setResizable(false);
-            frameDisplay.setVisible(true);
+            if (!txtSearch.getText().equals(""))
+            {
+                frameDisplay.setContentPane(panelSearch(dictinary.search(txtSearch.getText(), true), "Definition"));
+                frameDisplay.setResizable(false);
+                frameDisplay.setVisible(true);
+            }
+            else JOptionPane.showMessageDialog(this,
+                    "Empty!");
+        }
+        else if (e.getSource() == btnRefresh){
+            txtRandomWord.setText(dictinary.wordForToday());
+        }
+        else if (e.getSource() == btnSearchByDef) {
+            JFrame frameDisplay = new JFrame("Result");
+            frameDisplay.setBounds(400,300,320,200);
+            frameDisplay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            if (!txtSearch.getText().equals(""))
+            {
+                frameDisplay.setContentPane(panelSearch(dictinary.search(txtSearch.getText(), false), "Word"));
+                frameDisplay.setResizable(false);
+                frameDisplay.setVisible(true);
+            }
+            else JOptionPane.showMessageDialog(this,
+                    "Empty!");
         }
     }
 
-    private JPanel panelSearch(ArrayList<String> search){
+    private JPanel panelSearch(ArrayList<String> search, String tilte){
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         JLabel labelWord = new JLabel();
@@ -129,12 +160,14 @@ public class MainFrame extends JPanel implements ActionListener {
         panel.add(labelWord);
 
         JTextArea txtDef = new JTextArea();
-        txtDef.setBorder(new TitledBorder(null, "Definition", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        JScrollPane scrollBar = new JScrollPane(txtDef);
+        scrollBar.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
+        txtDef.setBorder(new TitledBorder(null, tilte, TitledBorder.LEADING, TitledBorder.TOP, null, null));
         txtDef.setEditable(false);
-        txtDef.setColumns(30);
+        txtDef.setColumns(20);
         txtDef.setRows(5);
         txtDef.setText(dictinary.toString(search));
-        panel.add(txtDef);
+        panel.add(scrollBar);
 
         return panel;
     }

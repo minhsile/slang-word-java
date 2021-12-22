@@ -53,8 +53,28 @@ public class Data {
         return result;
     }
 
-    public ArrayList<String> search(String s){
-        return dict.get(s);
+
+    public ArrayList<String> search(String str, boolean flag){
+        if (flag)
+            return dict.get(str);
+        else{
+            String[] keys = dict.keySet().toArray(new String[0]);
+            ArrayList<String> resultKeys = new ArrayList<>();
+            String definitionLowercase = str.toLowerCase();
+            for (String key: keys){
+                ArrayList<String> meanings = dict.get(key);
+                if (meanings != null){
+                    for (String value: meanings){
+                        String temp = value.toLowerCase();
+                        if(value.toLowerCase().contains(str.toLowerCase())){
+                            resultKeys.add(key);
+                            break;
+                        }
+                    }
+                }
+            }
+            return resultKeys;
+        }
     }
 
     public void edit(String oldWord, String newWord, String oldDef, String newDef){
@@ -64,8 +84,8 @@ public class Data {
 
     public static void main(String[] args){
         Data a = new Data();
-        a.search("$");
-        a.search(">.<");
+        a.search("$", true);
+        a.search(">.<", true);
 
     }
 
