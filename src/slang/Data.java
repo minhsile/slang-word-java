@@ -10,12 +10,11 @@ import java.util.*;
  * Description: ...
  */
 public class Data {
-    private HashMap<String, ArrayList<String>> dict;
+    private static HashMap<String, ArrayList<String>> dict;
     private ArrayList<String> historyList;
-    String pathDataRoot = "data/slang.txt";
-    String pathDataEdit = "data/slang_edit.txt";
-    String pathDataHistory = "data/slang_history.txt";
-    boolean isReset = false;
+    private static String pathDataRoot = "data/slang.txt";
+    private static String pathDataEdit = "data/slang_edit.txt";
+    private static String pathDataHistory = "data/slang_history.txt";
 
     public Data(){
         dict = new HashMap<>();
@@ -25,6 +24,7 @@ public class Data {
     }
 
     public ArrayList<String> getHistoryList() {
+        writeHistory();
         return historyList;
     }
 
@@ -55,17 +55,16 @@ public class Data {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(pathDataHistory));
             for (String data: historyList)
-                bw.write(data);
+                bw.write(data+"\n");
             bw.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-
-    void readData(boolean flag){
+    public void readData(boolean isReset){
         String path;
-        if (flag) {
+        if (isReset) {
             path = pathDataRoot;
             dict.clear();
         }
@@ -81,6 +80,30 @@ public class Data {
                     continue;
                 dict.put(str[0], getDefinition(str[1]));
             }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeData(){
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(pathDataEdit));
+            String[] keys = dict.keySet().toArray(new String[0]);
+            for (String key: keys){
+                bw.write(key + "`");
+                ArrayList<String> meanings = dict.get(key);
+                if (meanings != null){
+                    if (meanings.size() == 1)
+                        bw.write(meanings.get(0)+"\n");
+                    else {
+                        for (int i = 0; i < meanings.size() - 1; i++) {
+                            bw.write(meanings.get(i) + "| ");
+                        }
+                        bw.write(meanings.get(meanings.size()-1)+"\n");
+                    }
+                }
+            }
+            bw.close();
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -118,6 +141,21 @@ public class Data {
         dict.put(newWord, getDefinition(newDef));
     }
 
+    public void addNewSlangWord(String word, String meaning){
+        dict.put(word, new ArrayList<>(Arrays.asList(meaning)));
+    }
+
+    public void removeKey(String word){
+        dict.remove(word);
+    }
+
+    public void addNewDef(String word, String def){
+        ArrayList<String> list = dict.get(word);
+        list.add(def);
+    }
+    public boolean checkWordExits(String word){
+        return dict.containsKey(word);
+    }
     public static void main(String[] args){
         Data a = new Data();
         a.search("$", true);
