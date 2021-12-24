@@ -145,14 +145,14 @@ public class MainFrame extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnSearchByWord) {
             JFrame frameDisplay = new JFrame("Result");
-            frameDisplay.setBounds(400,300,320,200);
+            frameDisplay.setBounds(400,300,400,200);
             frameDisplay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             if (!txtSearch.getText().equals(""))
             {
                 dictionary.addHistory(txtSearch.getText());
                 ArrayList<String> result = dictionary.search(txtSearch.getText(), true);
                 if (result != null) {
-                    frameDisplay.setContentPane(panelSearch(result, "Definition"));
+                    frameDisplay.setContentPane(panelSearchWord(result, "Definition"));
                     frameDisplay.setResizable(false);
                     frameDisplay.setVisible(true);
                 } else JOptionPane.showMessageDialog(this, "This word does not exist!");
@@ -171,7 +171,7 @@ public class MainFrame extends JPanel implements ActionListener {
                 dictionary.addHistory(txtSearch.getText());
                 ArrayList<String> result = dictionary.search(txtSearch.getText(), false);
                 if (result != null) {
-                    frameDisplay.setContentPane(panelSearch(result, "Word"));
+                    frameDisplay.setContentPane(panelSearchDef(result, "Word"));
                     frameDisplay.setResizable(false);
                     frameDisplay.setVisible(true);
                 } else JOptionPane.showMessageDialog(this, "This word does not exist!");
@@ -240,7 +240,6 @@ public class MainFrame extends JPanel implements ActionListener {
             frameDisplay.setVisible(true);
 
 
-//            else JOptionPane.showMessageDialog(this, "Empty!");
         }  else if (e.getSource() == btnViewHistory){
             JFrame frameDisplay = new JFrame("History");
             frameDisplay.setBounds(400,300,320,200);
@@ -257,7 +256,61 @@ public class MainFrame extends JPanel implements ActionListener {
         }
     }
 
-    private JPanel panelSearch(ArrayList<String> search, String title){
+    private JPanel panelSearchWord(ArrayList<String> search, String title){
+        JList<String> viewList;
+        DefaultListModel<String> model = new DefaultListModel<>();
+        viewList = new JList<>(model);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        JLabel labelWord = new JLabel();
+        labelWord.setFont(myFontContent_1);
+        labelWord.setAlignmentX(CENTER_ALIGNMENT);
+        labelWord.setText(txtSearch.getText());
+        panel.add(labelWord);
+
+        JPanel middlePanel = new JPanel();
+        middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.X_AXIS));
+        panel.add(middlePanel);
+        viewList.setBorder(new TitledBorder(null, title, TitledBorder.LEADING, TitledBorder.TOP, null, null));
+//        viewList.setPreferredSize(new Dimension(300, 150));
+        for (String s: search) {
+            model.addElement(s);
+        }
+        JScrollPane scrollBar = new JScrollPane(viewList);
+        scrollBar.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
+        middlePanel.add(scrollBar);
+
+        JPanel btnPanel = new JPanel();
+        btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.PAGE_AXIS));
+        btnPanel.setBorder(new TitledBorder(null, "Function", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        middlePanel.add(btnPanel);
+        JButton btnAdd = new JButton("Add new definition");
+        btnAdd.setAlignmentX(CENTER_ALIGNMENT);
+        btnAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        btnPanel.add(Box.createRigidArea(new Dimension(0,20)));
+        btnPanel.add(btnAdd);
+
+        JButton btnDel = new JButton("Delete definition");
+        btnDel.setAlignmentX(CENTER_ALIGNMENT);
+        btnDel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        btnPanel.add(Box.createRigidArea(new Dimension(0,25)));
+        btnPanel.add(btnDel);
+        btnPanel.add(Box.createRigidArea(new Dimension(0,25)));
+
+        return panel;
+    }
+
+    private JPanel panelSearchDef(ArrayList<String> search, String title){
         JList<String> viewList;
         DefaultListModel<String> model = new DefaultListModel<>();
         viewList = new JList<>(model);
