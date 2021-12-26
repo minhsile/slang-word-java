@@ -136,26 +136,31 @@ public class Data {
         }
     }
 
-    public void edit(String oldWord, String newWord, String oldDef, String newDef){
-        dict.remove(oldWord);
-        dict.put(newWord, getDefinition(newDef));
-    }
-
     public void addNewSlangWord(String word, String meaning){
         dict.put(word, new ArrayList<>(Arrays.asList(meaning)));
     }
 
-    public void removeKey(String word){
-        dict.remove(word);
+    public boolean removeKey(String word){
+        if (checkWordExits(word)) {
+            dict.remove(word);
+            return true;
+        }
+        return false;
     }
 
     public void addNewDef(String word, String def){
         ArrayList<String> list = dict.get(word);
         list.add(def);
     }
+
+    public void deleteDef(String word, String def){
+        ArrayList<String> list = dict.get(word);
+        list.remove(def);
+    }
     public boolean checkWordExits(String word){
         return dict.containsKey(word);
     }
+
     public static void main(String[] args){
         Data a = new Data();
         a.search("$", true);

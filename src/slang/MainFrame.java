@@ -253,6 +253,46 @@ public class MainFrame extends JPanel implements ActionListener {
         } else if (e.getSource() == btnReset){
             dictionary.readData(true);
             JOptionPane.showMessageDialog(this, "Reset successfully!");
+        } else if (e.getSource() == btnDel){
+            JFrame frameDisplay = new JFrame("Delete a slang word");
+            frameDisplay.setBounds(400,300,350,125);
+            frameDisplay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+            JPanel panelAddDef = new JPanel();
+            panelAddDef.setLayout(new BoxLayout(panelAddDef, BoxLayout.PAGE_AXIS));
+            panelAddDef.add(Box.createRigidArea(new Dimension(0,10)));
+
+            JPanel panelContent = new JPanel();
+            panelContent.setLayout(new BoxLayout(panelContent, BoxLayout.LINE_AXIS));
+            panelContent.add(Box.createRigidArea(new Dimension(10,0)));
+            JLabel label = new JLabel("Word need to delete: ");
+            label.setFont(myFontContent_1);
+            JTextField txtWord = new JTextField();
+            txtWord.setFont(myFontContent_1);
+            panelContent.add(label);
+            panelContent.add(txtWord);
+            panelContent.add(Box.createRigidArea(new Dimension(10,0)));
+            panelAddDef.add(panelContent);
+
+            JButton btnAdd = new JButton("Delete");
+            btnAdd.setAlignmentX(CENTER_ALIGNMENT);
+            btnAdd.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (dictionary.removeKey(txtWord.getText()))
+                        JOptionPane.showMessageDialog(null, "Add successfully!");
+                    else JOptionPane.showMessageDialog(null, "Word doesn't exist!");
+                    frameDisplay.dispose();
+                }
+            });
+            panelAddDef.add(Box.createRigidArea(new Dimension(0,10)));
+            panelAddDef.add(btnAdd);
+            panelAddDef.add(Box.createRigidArea(new Dimension(0,10)));
+
+            frameDisplay.setContentPane(panelAddDef);
+            frameDisplay.setResizable(false);
+            frameDisplay.setVisible(true);
+//            JOptionPane.showMessageDialog(this, "Delete successfully!");
         }
     }
 
@@ -289,7 +329,44 @@ public class MainFrame extends JPanel implements ActionListener {
         btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JFrame frameDisplay = new JFrame("New definition");
+                frameDisplay.setBounds(400,300,350,125);
+                frameDisplay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+                JPanel panelAddDef = new JPanel();
+                panelAddDef.setLayout(new BoxLayout(panelAddDef, BoxLayout.PAGE_AXIS));
+                panelAddDef.add(Box.createRigidArea(new Dimension(0,10)));
+
+                JPanel panelContent = new JPanel();
+                panelContent.setLayout(new BoxLayout(panelContent, BoxLayout.LINE_AXIS));
+                panelContent.add(Box.createRigidArea(new Dimension(10,0)));
+                JLabel label = new JLabel("Add new definition: ");
+                label.setFont(myFontContent_1);
+                JTextField txtDef = new JTextField();
+                txtDef.setFont(myFontContent_1);
+                panelContent.add(label);
+                panelContent.add(txtDef);
+                panelContent.add(Box.createRigidArea(new Dimension(10,0)));
+                panelAddDef.add(panelContent);
+
+                JButton btnAdd = new JButton("Add");
+                btnAdd.setAlignmentX(CENTER_ALIGNMENT);
+                btnAdd.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        dictionary.addNewDef(txtSearch.getText(), txtDef.getText());
+                        JOptionPane.showMessageDialog(null, "Add successfully.");
+                        frameDisplay.dispose();
+                        model.addElement(txtDef.getText());
+                    }
+                });
+                panelAddDef.add(Box.createRigidArea(new Dimension(0,10)));
+                panelAddDef.add(btnAdd);
+                panelAddDef.add(Box.createRigidArea(new Dimension(0,10)));
+
+                frameDisplay.setContentPane(panelAddDef);
+                frameDisplay.setResizable(false);
+                frameDisplay.setVisible(true);
             }
         });
         btnPanel.add(Box.createRigidArea(new Dimension(0,20)));
@@ -300,6 +377,19 @@ public class MainFrame extends JPanel implements ActionListener {
         btnDel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String defCurr = (String) viewList.getSelectedValue();
+                if (defCurr != null) {
+                    int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want delete this definition?", "Confirm", JOptionPane.YES_NO_OPTION);
+                    if (dialogResult == JOptionPane.YES_OPTION) {
+                        dictionary.deleteDef(txtSearch.getText(), defCurr);
+                        JOptionPane.showMessageDialog(null, "Delete successfully.");
+                        model.clear();
+                        for (String s : search) {
+                            if (!s.equals(defCurr))
+                                model.addElement(s);
+                        }
+                    }
+                } else JOptionPane.showConfirmDialog(null, "You don't choose any definitions. Please choose again!", "Notification", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 
             }
         });
