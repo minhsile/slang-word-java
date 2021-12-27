@@ -168,6 +168,29 @@ public class Data {
 
     }
 
+    public String randomWord(){
+        Set<String> keySet = dict.keySet();
+        ArrayList<String> keyList = new ArrayList<>(keySet);
+
+        int size = keyList.size();
+        int randIdx = new Random().nextInt(size);
+
+        String randomKey = keyList.get(randIdx);
+        return randomKey;
+    }
+
+    public String randomDef(){
+        ArrayList<String> meanings = dict.get(randomWord());
+        int randIdx = new Random().nextInt(meanings.size());
+        return meanings.get(randIdx);
+    }
+
+    public String randomDef(String word){
+        ArrayList<String> meanings = dict.get(word);
+        int randIdx = new Random().nextInt(meanings.size());
+        return meanings.get(randIdx);
+    }
+
     public String wordForToday(){
         Set<String> keySet = dict.keySet();
         ArrayList<String> keyList = new ArrayList<>(keySet);

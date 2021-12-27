@@ -15,30 +15,30 @@ import java.util.ArrayList;
  * Description: ...
  */
 public class MainFrame extends JPanel implements ActionListener {
-    Data dictionary = new Data();
-    JLabel labelTitlte = new JLabel("Dictionary");
-    JTextField txtSearch = new JTextField();
-    JButton btnSearchByWord = new JButton("Search by word");
-    JButton btnSearchByDef = new JButton("Search by definition");
-    JButton btnAdd = new JButton("Add");
-    JButton btnDel = new JButton("Delete");
-    JButton btnRefresh = new JButton();
-    JButton btnViewHistory = new JButton("History");
-    JTextArea txtRandomWord = new JTextArea();
-    JButton btnReset = new JButton("Reset original sang words");
-    JButton btnQuizWord = new JButton("Quiz slang word");
-    JButton btnQuizDef = new JButton("Quiz definition");
+    private static Data dictionary = new Data();
+    private JLabel labelTitle = new JLabel("Dictionary");
+    private JTextField txtSearch = new JTextField();
+    private JButton btnSearchByWord = new JButton("Search by word");
+    private JButton btnSearchByDef = new JButton("Search by definition");
+    private JButton btnAdd = new JButton("Add");
+    private JButton btnDel = new JButton("Delete");
+    private JButton btnRefresh = new JButton();
+    private JButton btnViewHistory = new JButton("History");
+    private JTextArea txtRandomWord = new JTextArea();
+    private JButton btnReset = new JButton("Reset original sang words");
+    private JButton btnQuizWord = new JButton("Quiz slang word");
+    private JButton btnQuizDef = new JButton("Quiz definition");
 
-    Font myFontTitle = new Font("Tahoma", Font.PLAIN, 28);
-    Font myFontContent = new Font("Serif", Font.BOLD, 18);
-    Font myFontContent_1 = new Font("Serif", Font.ITALIC, 18);
-    Font myFontContent_2 = new Font("Serif", Font.PLAIN, 14);
+    private Font myFontTitle = new Font("Tahoma", Font.PLAIN, 28);
+    private Font myFontContent = new Font("Serif", Font.BOLD, 18);
+    private Font myFontContent_1 = new Font("Serif", Font.ITALIC, 18);
+    private Font myFontContent_2 = new Font("Serif", Font.PLAIN, 14);
 
     public MainFrame(){
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        labelTitlte.setAlignmentX(CENTER_ALIGNMENT);
-        labelTitlte.setFont(myFontTitle);
-        add(labelTitlte);
+        labelTitle.setAlignmentX(CENTER_ALIGNMENT);
+        labelTitle.setFont(myFontTitle);
+        add(labelTitle);
         add(Box.createRigidArea(new Dimension(0,10)));
         txtSearch.setFont(myFontContent);
         txtSearch.setColumns(28);
@@ -107,8 +107,10 @@ public class MainFrame extends JPanel implements ActionListener {
         JPanel panelBtn2 = new JPanel();
         panelBtn2.setLayout(new BoxLayout(panelBtn2, BoxLayout.LINE_AXIS));
         panelBtn2.add(btnQuizWord);
+        btnQuizWord.addActionListener(this);
         panelBtn2.add(Box.createRigidArea(new Dimension(10,0)));
         panelBtn2.add(btnQuizDef);
+        btnQuizDef.addActionListener(this);
         panelBtnFunction.add(panelBtn2);
 
         add(Box.createRigidArea(new Dimension(0,15)));
@@ -120,11 +122,15 @@ public class MainFrame extends JPanel implements ActionListener {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame frame = new JFrame("Dictionary");
         frame.setBounds(300, 200, 500, 400);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent e) {
                 Data.writeData();
-                System.exit(0);
+                int dialogResult = JOptionPane.showConfirmDialog (frame, "Do you want to exit?","Message",JOptionPane.YES_NO_OPTION);
+                if(dialogResult == JOptionPane.YES_OPTION){
+                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                } else
+                    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
             }
         });
         MainFrame newContentPane = new MainFrame();
@@ -292,7 +298,15 @@ public class MainFrame extends JPanel implements ActionListener {
             frameDisplay.setContentPane(panelAddDef);
             frameDisplay.setResizable(false);
             frameDisplay.setVisible(true);
-//            JOptionPane.showMessageDialog(this, "Delete successfully!");
+        } else if (e.getSource() == btnQuizWord){
+            JFrame.setDefaultLookAndFeelDecorated(true);
+            JFrame frame = new JFrame("Quiz");
+            frame.setBounds(350, 250, 500, 400);
+            frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            QuizFrame newContentPane = new QuizFrame();
+            frame.setContentPane(newContentPane);
+            frame.setResizable(false);
+            frame.setVisible(true);
         }
     }
 
@@ -312,7 +326,6 @@ public class MainFrame extends JPanel implements ActionListener {
         middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.X_AXIS));
         panel.add(middlePanel);
         viewList.setBorder(new TitledBorder(null, title, TitledBorder.LEADING, TitledBorder.TOP, null, null));
-//        viewList.setPreferredSize(new Dimension(300, 150));
         for (String s: search) {
             model.addElement(s);
         }
@@ -423,28 +436,7 @@ public class MainFrame extends JPanel implements ActionListener {
 
         return panel;
     }
-//
-//    private JPanel panelSearch(ArrayList<String> search, String title){
-//        JPanel panel = new JPanel();
-//        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-//        JLabel labelWord = new JLabel();
-//        labelWord.setFont(myFontContent_1);
-//        labelWord.setAlignmentX(CENTER_ALIGNMENT);
-//        labelWord.setText(txtSearch.getText());
-//        panel.add(labelWord);
-//
-//        JTextArea txtDef = new JTextArea();
-//        JScrollPane scrollBar = new JScrollPane(txtDef);
-//        scrollBar.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
-//        txtDef.setBorder(new TitledBorder(null, title, TitledBorder.LEADING, TitledBorder.TOP, null, null));
-//        txtDef.setEditable(false);
-//        txtDef.setColumns(20);
-//        txtDef.setRows(5);
-//        txtDef.setText(dictinary.toString(search));
-//        panel.add(scrollBar);
-//
-//        return panel;
-//    }
+
     private JPanel panelHistory(ArrayList<String> history){
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
@@ -460,6 +452,10 @@ public class MainFrame extends JPanel implements ActionListener {
         panel.add(scrollBar);
 
         return panel;
+    }
+
+    public static Data getDictionary() {
+        return dictionary;
     }
 }
 
