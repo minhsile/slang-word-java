@@ -200,7 +200,7 @@ public class Data {
 
         String randomKey = keyList.get(randIdx);
         ArrayList<String> randomValue = dict.get(randomKey);
-        return "\t             " + randomKey+ "\n" + toString(randomValue);
+        return "\t               " + randomKey+ "\n" + toString(randomValue);
     }
 
     public String toStringOneLine(ArrayList<String> str){

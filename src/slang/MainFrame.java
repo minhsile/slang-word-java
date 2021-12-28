@@ -35,17 +35,20 @@ public class MainFrame extends JPanel implements ActionListener {
     private Font myFontContent_2 = new Font("Serif", Font.PLAIN, 14);
 
     public MainFrame(){
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         labelTitle.setAlignmentX(CENTER_ALIGNMENT);
         labelTitle.setFont(myFontTitle);
-        add(labelTitle);
-        add(Box.createRigidArea(new Dimension(0,10)));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+        mainPanel.add(labelTitle);
+        mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
         txtSearch.setFont(myFontContent);
         txtSearch.setColumns(28);
         txtSearch.setAlignmentX(CENTER_ALIGNMENT);
         txtSearch.setBorder(new TitledBorder(null, "Search", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        add(txtSearch);
-        add(Box.createRigidArea(new Dimension(0,10)));
+        mainPanel.add(txtSearch);
+        mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
 
         JPanel panelBtnSearch = new JPanel();
         panelBtnSearch.setLayout(new BoxLayout(panelBtnSearch, BoxLayout.LINE_AXIS));
@@ -54,9 +57,9 @@ public class MainFrame extends JPanel implements ActionListener {
         panelBtnSearch.add(btnSearchByDef);
         btnSearchByWord.addActionListener(this);
         btnSearchByDef.addActionListener(this);
-        add(panelBtnSearch);
+        mainPanel.add(panelBtnSearch);
 
-        add(Box.createRigidArea(new Dimension(0,10)));
+        mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
         JPanel quiz = new JPanel();
         quiz.setLayout(new BoxLayout(quiz, BoxLayout.LINE_AXIS));
         txtRandomWord.setFont(myFontContent_1);
@@ -77,13 +80,13 @@ public class MainFrame extends JPanel implements ActionListener {
         btnRefresh.addActionListener(this);
         quiz.add(Box.createRigidArea(new Dimension(10,0)));
         quiz.add(btnRefresh);
-        add(quiz);
-        add(Box.createRigidArea(new Dimension(0,10)));
+        mainPanel.add(quiz);
+        mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
 
         JPanel panelBtnFunction = new JPanel();
         panelBtnFunction.setLayout(new BoxLayout(panelBtnFunction, BoxLayout.Y_AXIS));
         panelBtnFunction.setAlignmentX(CENTER_ALIGNMENT);
-        add(panelBtnFunction);
+        mainPanel.add(panelBtnFunction);
 
         JPanel panelBtn1 = new JPanel();
         panelBtn1.setLayout(new BoxLayout(panelBtn1, BoxLayout.LINE_AXIS));
@@ -113,7 +116,10 @@ public class MainFrame extends JPanel implements ActionListener {
         btnQuizDef.addActionListener(this);
         panelBtnFunction.add(panelBtn2);
 
-        add(Box.createRigidArea(new Dimension(0,15)));
+        mainPanel.add(Box.createRigidArea(new Dimension(0,15)));
+        add(Box.createRigidArea(new Dimension(20,0)));
+        add(mainPanel);
+        add(Box.createRigidArea(new Dimension(20,0)));
     }
     /**
      * Create and show GUI
@@ -299,14 +305,9 @@ public class MainFrame extends JPanel implements ActionListener {
             frameDisplay.setResizable(false);
             frameDisplay.setVisible(true);
         } else if (e.getSource() == btnQuizWord){
-            JFrame.setDefaultLookAndFeelDecorated(true);
-            JFrame frame = new JFrame("Quiz");
-            frame.setBounds(350, 250, 500, 400);
-            frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            QuizFrame newContentPane = new QuizFrame();
-            frame.setContentPane(newContentPane);
-            frame.setResizable(false);
-            frame.setVisible(true);
+            QuizFrame.startQuiz(true);
+        } else if (e.getSource() == btnQuizDef){
+            QuizFrame.startQuiz(false);
         }
     }
 

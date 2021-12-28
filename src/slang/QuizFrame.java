@@ -22,16 +22,20 @@ public class QuizFrame extends JPanel implements ActionListener {
     private JButton btnAns4 = new JButton("d");
     private String question;
     private String answer;
+    private static JFrame frame = new JFrame("Quiz");
+    private boolean flag;
 
     private Font myFontTitle = new Font("Tahoma", Font.PLAIN, 28);
     private Font myFontContent = new Font("Serif", Font.BOLD, 18);
     private Font myFontContent_1 = new Font("Serif", Font.ITALIC, 18);
     private Font myFontContent_2 = new Font("Serif", Font.PLAIN, 14);
 
-    public QuizFrame() {
+    public QuizFrame(boolean flag) {
         setDictinary();
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        setQuestion();
+        if (flag)
+            setQuestionByWord();
+        else setQuestionByDef();
         labelTitle.setAlignmentX(CENTER_ALIGNMENT);
         labelTitle.setFont(myFontTitle);
         labelTitle.setText(question);
@@ -73,7 +77,7 @@ public class QuizFrame extends JPanel implements ActionListener {
         btnAns4.addActionListener(this);
     }
 
-    private void setQuestion() {
+    private void setQuestionByWord() {
         question = dictinary.randomWord();
         answer = dictinary.randomDef(question);
         btnAns1.setText(dictinary.randomDef());
@@ -90,28 +94,43 @@ public class QuizFrame extends JPanel implements ActionListener {
         else btnAns4.setText(answer);
     }
 
+    private void setQuestionByDef() {
+        answer = dictinary.randomWord();
+        question = dictinary.randomDef(answer);
+        btnAns1.setText(dictinary.randomWord());
+        btnAns2.setText(dictinary.randomWord());
+        btnAns3.setText(dictinary.randomWord());
+        btnAns4.setText(dictinary.randomWord());
+        int randIdx = new Random().nextInt(4);
+        if (randIdx == 0)
+            btnAns1.setText(answer);
+        else if (randIdx == 1)
+            btnAns2.setText(answer);
+        else if (randIdx == 2)
+            btnAns3.setText(answer);
+        else btnAns4.setText(answer);
+    }
+
     private void setDictinary() {
         this.dictinary = MainFrame.getDictionary();
     }
 
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-
-            JButton btn = (JButton) source;
-            if (btn.getText().equals(answer))
-                JOptionPane.showMessageDialog(this, "You are correct!");
-            else JOptionPane.showMessageDialog(this, "You fail!");
-
+        JButton btn = (JButton) source;
+        if (btn.getText().equals(answer))
+            JOptionPane.showMessageDialog(this, "You are correct!");
+        else JOptionPane.showMessageDialog(this, "You fail!");
+        frame.dispose();
     }
     /**
      * Create and show GUI
      */
-    private static void createAndShowGUI() {
+    private static void createAndShowGUI(boolean flag) {
         JFrame.setDefaultLookAndFeelDecorated(true);
-        JFrame frame = new JFrame("Quiz");
         frame.setBounds(300, 200, 500, 400);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        QuizFrame newContentPane = new QuizFrame();
+        QuizFrame newContentPane = new QuizFrame(flag);
         frame.setContentPane(newContentPane);
         frame.setResizable(false);
         frame.setVisible(true);
@@ -119,9 +138,9 @@ public class QuizFrame extends JPanel implements ActionListener {
 
     /**
      * Main function
-     * @param args
+//     * @param args
      */
-    public static void main(String[]args){
-        createAndShowGUI();
+    public static void startQuiz(boolean flag){
+        createAndShowGUI(flag);
     }
 }
