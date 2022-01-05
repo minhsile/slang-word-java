@@ -1,7 +1,6 @@
 package slang;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,32 +10,31 @@ import java.util.Random;
  * slang
  * Created by Minh Sĩ Lê
  * Date 12/27/2021 - 12:03 PM
- * Description: ...
+ * Description: Quiz Frame
  */
 public class QuizFrame extends JPanel implements ActionListener {
-    Data dictinary;
-    private JLabel labelTitle = new JLabel();
-    private JButton btnAns1 = new JButton("a");
-    private JButton btnAns2 = new JButton("b");
-    private JButton btnAns3 = new JButton("c");
-    private JButton btnAns4 = new JButton("d");
+    Data dictionary;
+    private final JButton btnAns1 = new JButton("a");
+    private final JButton btnAns2 = new JButton("b");
+    private final JButton btnAns3 = new JButton("c");
+    private final JButton btnAns4 = new JButton("d");
     private String question;
     private String answer;
-    private static JFrame frame = new JFrame("Quiz");
-    private boolean flag;
+    private static final JFrame frame = new JFrame("Quiz");
 
-    private Font myFontTitle = new Font("Tahoma", Font.PLAIN, 28);
-    private Font myFontContent = new Font("Serif", Font.BOLD, 18);
-    private Font myFontContent_1 = new Font("Serif", Font.ITALIC, 18);
-    private Font myFontContent_2 = new Font("Serif", Font.PLAIN, 14);
-
+    /**
+     * Create Frame
+     * @param flag Quiz word or definition
+     */
     public QuizFrame(boolean flag) {
         setDictinary();
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         if (flag)
             setQuestionByWord();
         else setQuestionByDef();
+        JLabel labelTitle = new JLabel();
         labelTitle.setAlignmentX(CENTER_ALIGNMENT);
+        Font myFontTitle = new Font("Tahoma", Font.PLAIN, 28);
         labelTitle.setFont(myFontTitle);
         labelTitle.setText(question);
         add(Box.createRigidArea(new Dimension(0, 20)));
@@ -77,13 +75,16 @@ public class QuizFrame extends JPanel implements ActionListener {
         btnAns4.addActionListener(this);
     }
 
+    /**
+     * Add question (Word) to quiz
+     */
     private void setQuestionByWord() {
-        question = dictinary.randomWord();
-        answer = dictinary.randomDef(question);
-        btnAns1.setText(dictinary.randomDef());
-        btnAns2.setText(dictinary.randomDef());
-        btnAns3.setText(dictinary.randomDef());
-        btnAns4.setText(dictinary.randomDef());
+        question = dictionary.randomWord();
+        answer = dictionary.randomDef(question);
+        btnAns1.setText(dictionary.randomDef());
+        btnAns2.setText(dictionary.randomDef());
+        btnAns3.setText(dictionary.randomDef());
+        btnAns4.setText(dictionary.randomDef());
         int randIdx = new Random().nextInt(4);
         if (randIdx == 0)
             btnAns1.setText(answer);
@@ -94,13 +95,16 @@ public class QuizFrame extends JPanel implements ActionListener {
         else btnAns4.setText(answer);
     }
 
+    /**
+     * Add question (Definition) to quiz
+     */
     private void setQuestionByDef() {
-        answer = dictinary.randomWord();
-        question = dictinary.randomDef(answer);
-        btnAns1.setText(dictinary.randomWord());
-        btnAns2.setText(dictinary.randomWord());
-        btnAns3.setText(dictinary.randomWord());
-        btnAns4.setText(dictinary.randomWord());
+        answer = dictionary.randomWord();
+        question = dictionary.randomDef(answer);
+        btnAns1.setText(dictionary.randomWord());
+        btnAns2.setText(dictionary.randomWord());
+        btnAns3.setText(dictionary.randomWord());
+        btnAns4.setText(dictionary.randomWord());
         int randIdx = new Random().nextInt(4);
         if (randIdx == 0)
             btnAns1.setText(answer);
@@ -111,16 +115,23 @@ public class QuizFrame extends JPanel implements ActionListener {
         else btnAns4.setText(answer);
     }
 
+    /**
+     * Set data of dictionary
+     */
     private void setDictinary() {
-        this.dictinary = MainFrame.getDictionary();
+        this.dictionary = MainFrame.getDictionary();
     }
 
+    /**
+     * Action
+     * @param e event
+     */
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         JButton btn = (JButton) source;
         if (btn.getText().equals(answer))
             JOptionPane.showMessageDialog(this, "You are correct!");
-        else JOptionPane.showMessageDialog(this, "You fail!");
+        else JOptionPane.showMessageDialog(this, "You fail! The answer is: " + answer );
         frame.dispose();
     }
     /**

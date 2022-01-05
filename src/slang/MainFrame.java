@@ -12,37 +12,38 @@ import java.util.ArrayList;
  * ui
  * Created by Minh Sĩ Lê
  * Date 12/13/2021 - 8:53 PM
- * Description: ...
+ * Description: Main Frame of Dictionary
  */
 public class MainFrame extends JPanel implements ActionListener {
-    private static Data dictionary = new Data();
-    private JLabel labelTitle = new JLabel("Dictionary");
-    private JTextField txtSearch = new JTextField();
-    private JButton btnSearchByWord = new JButton("Search by word");
-    private JButton btnSearchByDef = new JButton("Search by definition");
-    private JButton btnAdd = new JButton("Add");
-    private JButton btnDel = new JButton("Delete");
-    private JButton btnRefresh = new JButton();
-    private JButton btnViewHistory = new JButton("History");
-    private JTextArea txtRandomWord = new JTextArea();
-    private JButton btnReset = new JButton("Reset original sang words");
-    private JButton btnQuizWord = new JButton("Quiz slang word");
-    private JButton btnQuizDef = new JButton("Quiz definition");
+    private static final Data dictionary = new Data();
+    private final JTextField txtSearch = new JTextField();
+    private final JButton btnSearchByWord = new JButton("Search by word");
+    private final JButton btnSearchByDef = new JButton("Search by definition");
+    private final JButton btnAdd = new JButton("Add");
+    private final JButton btnDel = new JButton("Delete");
+    private final JButton btnRefresh = new JButton();
+    private final JButton btnViewHistory = new JButton("History");
+    private final JTextArea txtRandomWord = new JTextArea();
+    private final JButton btnReset = new JButton("Reset original sang words");
+    private final JButton btnQuizWord = new JButton("Quiz slang word");
+    private final JButton btnQuizDef = new JButton("Quiz definition");
 
-    private Font myFontTitle = new Font("Tahoma", Font.PLAIN, 28);
-    private Font myFontContent = new Font("Serif", Font.BOLD, 18);
-    private Font myFontContent_1 = new Font("Serif", Font.ITALIC, 18);
-    private Font myFontContent_2 = new Font("Serif", Font.PLAIN, 14);
+    private final Font myFontContent_1 = new Font("Serif", Font.ITALIC, 18);
+    private final Font myFontContent_2 = new Font("Serif", Font.PLAIN, 14);
 
     public MainFrame(){
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+        JLabel labelTitle = new JLabel("Dictionary");
         labelTitle.setAlignmentX(CENTER_ALIGNMENT);
+        Font myFontTitle = new Font("Tahoma", Font.PLAIN, 28);
         labelTitle.setFont(myFontTitle);
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
+        // Search function
         mainPanel.add(labelTitle);
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
+        Font myFontContent = new Font("Serif", Font.BOLD, 18);
         txtSearch.setFont(myFontContent);
         txtSearch.setColumns(28);
         txtSearch.setAlignmentX(CENTER_ALIGNMENT);
@@ -50,6 +51,7 @@ public class MainFrame extends JPanel implements ActionListener {
         mainPanel.add(txtSearch);
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
 
+            // search button
         JPanel panelBtnSearch = new JPanel();
         panelBtnSearch.setLayout(new BoxLayout(panelBtnSearch, BoxLayout.LINE_AXIS));
         panelBtnSearch.add(btnSearchByWord);
@@ -59,16 +61,17 @@ public class MainFrame extends JPanel implements ActionListener {
         btnSearchByDef.addActionListener(this);
         mainPanel.add(panelBtnSearch);
 
+        // Random word function
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
-        JPanel quiz = new JPanel();
-        quiz.setLayout(new BoxLayout(quiz, BoxLayout.LINE_AXIS));
+        JPanel randomPanel = new JPanel();
+        randomPanel.setLayout(new BoxLayout(randomPanel, BoxLayout.LINE_AXIS));
         txtRandomWord.setFont(myFontContent_1);
         txtRandomWord.setColumns(32);
         txtRandomWord.setRows(5);
         txtRandomWord.setEditable(false);
         txtRandomWord.setBorder(new TitledBorder(null, "Word for today", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         txtRandomWord.setText(dictionary.wordForToday());
-        quiz.add(txtRandomWord);
+        randomPanel.add(txtRandomWord);
         ImageIcon iconRefresh = new ImageIcon(MainFrame.class.getResource("/icon/refresh.png"));
         int scale = 45;
         int width = iconRefresh.getIconWidth();
@@ -78,11 +81,12 @@ public class MainFrame extends JPanel implements ActionListener {
         btnRefresh.setBorder(new EmptyBorder(0, 0, 0, 0));
         btnRefresh.setContentAreaFilled(false);
         btnRefresh.addActionListener(this);
-        quiz.add(Box.createRigidArea(new Dimension(10,0)));
-        quiz.add(btnRefresh);
-        mainPanel.add(quiz);
+        randomPanel.add(Box.createRigidArea(new Dimension(10,0)));
+        randomPanel.add(btnRefresh);
+        mainPanel.add(randomPanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
 
+        // Button for another function (Add, delete, reset, history, quiz)
         JPanel panelBtnFunction = new JPanel();
         panelBtnFunction.setLayout(new BoxLayout(panelBtnFunction, BoxLayout.Y_AXIS));
         panelBtnFunction.setAlignmentX(CENTER_ALIGNMENT);
@@ -153,6 +157,10 @@ public class MainFrame extends JPanel implements ActionListener {
         createAndShowGUI();
     }
 
+    /**
+     * Action for buttons
+     * @param e event
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnSearchByWord) {
@@ -311,6 +319,12 @@ public class MainFrame extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Search by word (Panel)
+     * @param search result of search function
+     * @param title word
+     * @return JPanel
+     */
     private JPanel panelSearchWord(ArrayList<String> search, String title){
         JList<String> viewList;
         DefaultListModel<String> model = new DefaultListModel<>();
@@ -414,6 +428,12 @@ public class MainFrame extends JPanel implements ActionListener {
         return panel;
     }
 
+    /**
+     * Search by meaning (Panel)
+     * @param search result of search function
+     * @param title word
+     * @return JPanel
+     */
     private JPanel panelSearchDef(ArrayList<String> search, String title){
         JList<String> viewList;
         DefaultListModel<String> model = new DefaultListModel<>();
@@ -438,6 +458,11 @@ public class MainFrame extends JPanel implements ActionListener {
         return panel;
     }
 
+    /**
+     * Search history panel
+     * @param history list of searched words
+     * @return JPanel
+     */
     private JPanel panelHistory(ArrayList<String> history){
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
@@ -455,6 +480,10 @@ public class MainFrame extends JPanel implements ActionListener {
         return panel;
     }
 
+    /**
+     * get Dictionary list
+     * @return Data
+     */
     public static Data getDictionary() {
         return dictionary;
     }
