@@ -150,8 +150,9 @@ public class Data {
      */
     public ArrayList<String> search(String str, boolean flag){
         if (flag)
-            return dict.get(str.toLowerCase());
+            return dict.get(str);
         else{
+            System.out.println(str);
             String[] keys = dict.keySet().toArray(new String[0]);
             ArrayList<String> result = new ArrayList<>();
             for (String key: keys){

@@ -131,7 +131,7 @@ public class QuizFrame extends JPanel implements ActionListener {
         JButton btn = (JButton) source;
         if (btn.getText().equals(answer))
             JOptionPane.showMessageDialog(this, "You are correct!");
-        else JOptionPane.showMessageDialog(this, "You fail! The answer is: " + answer );
+        else JOptionPane.showMessageDialog(this, "You are wrong! The answer is: " + answer );
         frame.dispose();
     }
     /**

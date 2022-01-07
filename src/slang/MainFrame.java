@@ -299,9 +299,12 @@ public class MainFrame extends JPanel implements ActionListener {
             btnAdd.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (dictionary.removeKey(txtWord.getText()))
-                        JOptionPane.showMessageDialog(null, "Add successfully!");
-                    else JOptionPane.showMessageDialog(null, "Word doesn't exist!");
+                    int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want delete this slang word?", "Confirm", JOptionPane.YES_NO_OPTION);
+                    if (dialogResult == JOptionPane.YES_OPTION) {
+                        if (dictionary.removeKey(txtWord.getText()))
+                            JOptionPane.showMessageDialog(null, "Delete successfully!");
+                        else JOptionPane.showMessageDialog(null, "Word doesn't exist!");
+                    }
                     frameDisplay.dispose();
                 }
             });
